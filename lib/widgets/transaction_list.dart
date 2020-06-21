@@ -6,64 +6,79 @@ class TransactionList extends StatefulWidget {
   final List<Transaction> userTransactions;
   TransactionList(this.userTransactions);
   @override
-  _TransactionListState createState() =>
-      _TransactionListState(userTransactions);
+  _TransactionListState createState() => _TransactionListState();
 }
 
 class _TransactionListState extends State<TransactionList> {
-  final List<Transaction> userTransactions;
-  _TransactionListState(this.userTransactions);
   @override
   Widget build(BuildContext context) {
     return Container(
       height: 300,
-      child: ListView.builder(
-        itemBuilder: (ctx, index) {
-          return Card(
-            elevation: 5,
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.start,
+      child: widget.userTransactions.isEmpty
+          ? Column(
               children: [
-                Container(
-                  child: Text(
-                    '\$${userTransactions[index].amount}',
-                    style: TextStyle(
-                        color: Colors.purple,
-                        fontWeight: FontWeight.bold,
-                        fontSize: 14),
-                  ),
-                  padding: EdgeInsets.all(20),
-                  decoration: BoxDecoration(
-                    border: Border.all(
-                      color: Colors.purple,
-                      width: 2,
-                    ),
-                  ),
+                Text(
+                  'No Transactions',
+                  style: Theme.of(context).textTheme.subtitle1,
+                ),
+                SizedBox(
+                  height: 10,
                 ),
                 Container(
-                  margin: EdgeInsets.all(5),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
+                  height: 200,
+                  child: Image.asset('assets/images/waiting.png',
+                      fit: BoxFit.cover),
+                ),
+              ],
+            )
+          : ListView.builder(
+              itemBuilder: (ctx, index) {
+                return Card(
+                  elevation: 5,
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.start,
                     children: [
-                      Text(
-                        userTransactions[index].title,
-                        style: TextStyle(
-                          fontSize: 14,
-                          fontWeight: FontWeight.bold,
+                      Flexible(
+                        fit: FlexFit.loose,
+                        child: Container(
+                          child: Text(
+                            '\$${widget.userTransactions[index].amount.toStringAsFixed(2)}',
+                            style: TextStyle(
+                                color: Theme.of(context).primaryColor,
+                                fontWeight: FontWeight.bold,
+                                fontSize: 14),
+                          ),
+                          padding: EdgeInsets.all(20),
+                          decoration: BoxDecoration(
+                            border: Border.all(
+                              color: Theme.of(context).primaryColor,
+                              width: 2,
+                            ),
+                          ),
                         ),
                       ),
-                      Text(
-                        DateFormat.yMMMd().format(userTransactions[index].date),
+                      Container(
+                        margin: EdgeInsets.all(5),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              widget.userTransactions[index].title,
+                              style: Theme.of(context).textTheme.title,
+                            ),
+                            Text(
+                              DateFormat.yMMMd()
+                                  .format(widget.userTransactions[index].date),
+                            )
+                          ],
+                        ),
                       )
                     ],
                   ),
-                )
-              ],
+                );
+              },
+              itemCount: widget.userTransactions.length,
             ),
-          );
-        },
-        itemCount: userTransactions.length,
-      ),
     );
   }
 }

@@ -1,12 +1,33 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
-class TransactionForm extends StatelessWidget {
-  final inputController = TextEditingController();
-  final amountController = TextEditingController();
+class TransactionForm extends StatefulWidget {
   final Function addNewTransaction;
   TransactionForm(this.addNewTransaction);
+
+  @override
+  _TransactionFormState createState() => _TransactionFormState();
+}
+
+class _TransactionFormState extends State<TransactionForm> {
+  final inputController = TextEditingController();
+
+  final amountController = TextEditingController();
+
   final _formKey = GlobalKey<FormState>();
+
+  void sumbitData() {
+    if (_formKey.currentState.validate()) {
+      final enteredName = inputController.text;
+      final enteredAmount = double.parse(amountController.text);
+      widget.addNewTransaction(
+        enteredName,
+        enteredAmount,
+      );
+      Navigator.of(context).pop();
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Card(
@@ -22,6 +43,7 @@ class TransactionForm extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.end,
                 children: [
                   TextFormField(
+                    onSaved: (_) => sumbitData,
                     controller: inputController,
                     decoration: InputDecoration(labelText: 'Name'),
                     validator: (value) {
@@ -32,6 +54,7 @@ class TransactionForm extends StatelessWidget {
                     },
                   ),
                   TextFormField(
+                    onSaved: (_) => sumbitData,
                     keyboardType: TextInputType.number,
                     controller: amountController,
                     decoration: InputDecoration(
@@ -52,15 +75,7 @@ class TransactionForm extends StatelessWidget {
               child: Text(
                 'Add Transaction',
               ),
-              textColor: Colors.purple,
-              onPressed: () {
-                if (_formKey.currentState.validate()) {
-                  addNewTransaction(
-                    inputController.text,
-                    double.parse(amountController.text),
-                  );
-                }
-              },
+              onPressed: sumbitData,
             )
           ],
         ),
