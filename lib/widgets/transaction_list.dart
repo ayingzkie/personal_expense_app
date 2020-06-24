@@ -1,15 +1,38 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:personal_expense_app/widgets/transaction_form.dart';
 import '../models/transaction.dart';
 
 class TransactionList extends StatefulWidget {
   final List<Transaction> userTransactions;
-  TransactionList(this.userTransactions);
+  final Function newTx;
+  TransactionList(this.userTransactions, this.newTx);
   @override
   _TransactionListState createState() => _TransactionListState();
 }
 
 class _TransactionListState extends State<TransactionList> {
+  void _deleteTransaction(index) {
+    setState(() {
+      widget.userTransactions.removeAt(index);
+    });
+  }
+
+  void _startNewTx(BuildContext ctx, Transaction tx) {
+    showModalBottomSheet(
+        context: ctx,
+        builder: (_) {
+          return GestureDetector(
+            onTap: () {},
+            child: TransactionForm(
+              addNewTransaction: widget.newTx,
+              transaction: tx,
+            ),
+            behavior: HitTestBehavior.opaque,
+          );
+        });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -35,45 +58,29 @@ class _TransactionListState extends State<TransactionList> {
               itemBuilder: (ctx, index) {
                 return Card(
                   elevation: 5,
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    children: [
-                      Flexible(
-                        fit: FlexFit.loose,
-                        child: Container(
-                          child: Text(
-                            '\$${widget.userTransactions[index].amount.toStringAsFixed(2)}',
-                            style: TextStyle(
-                                color: Theme.of(context).primaryColor,
-                                fontWeight: FontWeight.bold,
-                                fontSize: 14),
-                          ),
-                          padding: EdgeInsets.all(20),
-                          decoration: BoxDecoration(
-                            border: Border.all(
-                              color: Theme.of(context).primaryColor,
-                              width: 2,
-                            ),
-                          ),
-                        ),
-                      ),
-                      Container(
-                        margin: EdgeInsets.all(5),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              widget.userTransactions[index].title,
-                              style: Theme.of(context).textTheme.title,
-                            ),
-                            Text(
-                              DateFormat.yMMMd()
-                                  .format(widget.userTransactions[index].date),
-                            )
-                          ],
-                        ),
-                      )
-                    ],
+                  margin: EdgeInsets.symmetric(vertical: 8, horizontal: 5),
+                  child: ListTile(
+                    onTap: () {
+                      _startNewTx(ctx, widget.userTransactions[index]);
+                    },
+                    leading: CircleAvatar(
+                      radius: 30,
+                      child: Text('\$${widget.userTransactions[index].amount}'),
+                    ),
+                    title: Text(
+                      widget.userTransactions[index].title,
+                      style: Theme.of(context).textTheme.subtitle1,
+                    ),
+                    subtitle: Text(
+                      DateFormat.yMMMd()
+                          .format(widget.userTransactions[index].date),
+                    ),
+                    trailing: IconButton(
+                      icon: Icon(Icons.delete),
+                      onPressed: () {
+                        _deleteTransaction(index);
+                      },
+                    ),
                   ),
                 );
               },

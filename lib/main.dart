@@ -16,20 +16,18 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: 'Flutter Demo',
       theme: ThemeData(
-        primarySwatch: Colors.purple,
+        primarySwatch: Colors.green,
         accentColor: Colors.amber,
-        visualDensity: VisualDensity.adaptivePlatformDensity,
         fontFamily: 'Quicksand',
         textTheme: ThemeData.light().textTheme.copyWith(
               subtitle1: TextStyle(
-                fontFamily: 'OpenSans',
-                fontSize: 18,
                 fontWeight: FontWeight.bold,
               ),
+              button: TextStyle(color: Colors.white),
             ),
         appBarTheme: AppBarTheme(
           textTheme: ThemeData.light().textTheme.copyWith(
-                title: TextStyle(
+                subtitle1: TextStyle(
                     fontFamily: 'OpenSans',
                     fontSize: 20,
                     fontWeight: FontWeight.bold,
@@ -66,11 +64,11 @@ class _MyHomePageState extends State<MyHomePage> {
     // ),
   ];
 
-  void _addNewTransaction(String name, double amount) {
+  void _addNewTransaction(String name, double amount, DateTime date) {
     final newTx = Transaction(
         title: name,
         amount: amount,
-        date: DateTime.now(),
+        date: date,
         id: 'tx${_userTransactions.length + 1}');
 
     setState(() {
@@ -84,7 +82,9 @@ class _MyHomePageState extends State<MyHomePage> {
         builder: (_) {
           return GestureDetector(
             onTap: () {},
-            child: TransactionForm(_addNewTransaction),
+            child: TransactionForm(
+              addNewTransaction: _addNewTransaction,
+            ),
             behavior: HitTestBehavior.opaque,
           );
         });
@@ -106,11 +106,14 @@ class _MyHomePageState extends State<MyHomePage> {
       appBar: AppBar(
         title: Text(
           widget.title,
+          style: Theme.of(context).appBarTheme.textTheme.subtitle1,
         ),
         actions: [
           IconButton(
             icon: Icon(Icons.add),
-            onPressed: () => _startNewTx(context),
+            onPressed: () => _startNewTx(
+              context,
+            ),
           )
         ],
       ),
@@ -120,14 +123,19 @@ class _MyHomePageState extends State<MyHomePage> {
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
             Chart(_recentTx),
-            TransactionList(_userTransactions),
+            TransactionList(
+              _userTransactions,
+              _addNewTransaction,
+            ),
           ],
         ),
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
       floatingActionButton: FloatingActionButton(
         child: Icon(Icons.add),
-        onPressed: () => _startNewTx(context),
+        onPressed: () => _startNewTx(
+          context,
+        ),
       ),
     );
   }
