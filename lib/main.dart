@@ -76,6 +76,12 @@ class _MyHomePageState extends State<MyHomePage> {
     });
   }
 
+  void _deleteTransaction(Transaction tx) {
+    setState(() {
+      _userTransactions.remove(tx);
+    });
+  }
+
   void _startNewTx(BuildContext ctx) {
     showModalBottomSheet(
         context: ctx,
@@ -102,30 +108,48 @@ class _MyHomePageState extends State<MyHomePage> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text(
-          widget.title,
-          style: Theme.of(context).appBarTheme.textTheme.subtitle1,
-        ),
-        actions: [
-          IconButton(
-            icon: Icon(Icons.add),
-            onPressed: () => _startNewTx(
-              context,
-            ),
-          )
-        ],
+    final _appBar = AppBar(
+      title: Text(
+        widget.title,
+        style: Theme.of(context).appBarTheme.textTheme.subtitle1,
       ),
+      actions: [
+        IconButton(
+          icon: Icon(Icons.add),
+          onPressed: () => _startNewTx(
+            context,
+          ),
+        )
+      ],
+    );
+
+    final _isLandScape =
+        MediaQuery.of(context).orientation == Orientation.landscape;
+
+    return Scaffold(
+      appBar: _appBar,
       body: SingleChildScrollView(
         child: Column(
           //mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            Chart(_recentTx),
-            TransactionList(
-              _userTransactions,
-              _addNewTransaction,
+            Container(
+              height: (MediaQuery.of(context).size.height -
+                      _appBar.preferredSize.height -
+                      MediaQuery.of(context).padding.top) *
+                  (_isLandScape ? 0.5 : 0.3),
+              child: Chart(_recentTx),
+            ),
+            Container(
+              height: (MediaQuery.of(context).size.height -
+                      _appBar.preferredSize.height -
+                      MediaQuery.of(context).padding.top) *
+                  (_isLandScape ? 0.5 : 0.7),
+              child: TransactionList(
+                _userTransactions,
+                _addNewTransaction,
+                _deleteTransaction,
+              ),
             ),
           ],
         ),
