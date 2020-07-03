@@ -30,18 +30,24 @@ class _TransactionListState extends State<TransactionList> {
 
   @override
   Widget build(BuildContext context) {
+    final _isLandScape =
+        MediaQuery.of(context).orientation == Orientation.landscape;
+
     return widget.userTransactions.isEmpty
         ? Column(
             children: [
-              Text(
-                'No Transactions',
-                style: Theme.of(context).textTheme.subtitle1,
+              FittedBox(
+                child: Text(
+                  'No Transactions',
+                  style: Theme.of(context).textTheme.subtitle1,
+                ),
               ),
               SizedBox(
                 height: 10,
               ),
               Container(
-                height: 200,
+                height: MediaQuery.of(context).size.height *
+                    (_isLandScape ? 0.2 : 0.5),
                 child:
                     Image.asset('assets/images/waiting.png', fit: BoxFit.cover),
               ),

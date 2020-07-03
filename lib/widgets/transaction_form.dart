@@ -49,8 +49,7 @@ class _TransactionFormState extends State<TransactionForm> {
 
   @override
   Widget build(BuildContext context) {
-    return Card(
-      elevation: 5,
+    return SingleChildScrollView(
       child: Container(
         padding: EdgeInsets.all(10),
         child: Column(

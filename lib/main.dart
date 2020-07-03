@@ -85,11 +85,16 @@ class _MyHomePageState extends State<MyHomePage> {
   void _startNewTx(BuildContext ctx) {
     showModalBottomSheet(
         context: ctx,
+        backgroundColor: Colors.transparent,
+        isScrollControlled: true,
         builder: (_) {
           return GestureDetector(
             onTap: () {},
-            child: TransactionForm(
-              addNewTransaction: _addNewTransaction,
+            child: Padding(
+              padding: MediaQuery.of(context).viewInsets,
+              child: TransactionForm(
+                addNewTransaction: _addNewTransaction,
+              ),
             ),
             behavior: HitTestBehavior.opaque,
           );
